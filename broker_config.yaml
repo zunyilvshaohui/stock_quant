@@ -1,0 +1,182 @@
+# config/broker_config.yaml 文件内容
+# 券商和通知配置
+
+# 运行模式
+mode: "paper"  # paper模拟, live实盘
+
+# 模拟交易配置
+paper_trading:
+  initial_capital: 1000000      # 初始资金
+  commission_rate: 0.0003       # 佣金
+  min_commission: 5.0           # 最低佣金
+  slippage: 0.001               # 滑点
+
+  # 模拟延迟
+  delay:
+    order_execution: 2.0        # 订单执行延迟（秒）
+    market_data: 1.0            # 行情数据延迟（秒）
+
+# 实盘券商配置（需要时启用）
+brokers:
+  # 华泰证券
+  ht_securities:
+    enabled: false
+    type: "ht"
+    account: ""
+    password: ""
+    trade_server: ""
+    quote_server: ""
+
+  # 东方财富
+  eastmoney:
+    enabled: false
+    type: "eastmoney"
+    account: ""
+    password: ""
+
+  # 模拟券商（用于测试）
+  mock_broker:
+    enabled: true
+    type: "mock"
+    description: "本地模拟券商"
+
+# 通知配置
+notification:
+  enabled: true
+  default_channel: "dingtalk"  # dingtalk, wechat, email, console
+
+  # 通知级别
+  levels:
+    - "ERROR"      # 错误
+    - "TRADE"      # 交易信号
+    - "DAILY"      # 每日报告
+    - "WARNING"    # 警告
+
+  # 钉钉机器人配置
+  dingtalk:
+    enabled: true
+    webhook: "https://oapi.dingtalk.com/robot/send?access_token=YOUR_TOKEN_HERE"
+    secret: "YOUR_SECRET_HERE"  # 安全设置加签密钥
+    at_mobiles: []              # @的手机号，如 ["13800138000"]
+    at_all: false               # 是否@所有人
+
+    # 消息模板
+    templates:
+      trade_signal: |
+        🚨 交易信号通知
+        ===============
+        时间: {time}
+        股票: {symbol} ({name})
+        操作: {action}
+        价格: {price:.2f}
+        数量: {quantity}
+        信号强度: {strength}
+        当前CCI: {cci:.2f}
+        
+        策略: {strategy}
+        备注: {remark}
+
+      daily_report: |
+        📊 每日交易报告
+        ==============
+        日期: {date}
+        总资产: {total_asset:,.2f}元
+        现金: {cash:,.2f}元
+        持仓市值: {position_value:,.2f}元
+        
+        今日盈亏: {daily_pnl:+,.2f}元 ({daily_pnl_pct:+.2f}%)
+        累计盈亏: {total_pnl:+,.2f}元 ({total_pnl_pct:+.2f}%)
+        
+        持仓股票: {position_count}只
+        今日交易: {trade_count}笔
+        胜率: {win_rate:.1f}%
+        
+        最大回撤: {max_drawdown:.2f}%
+        夏普比率: {sharpe_ratio:.2f}
+
+      risk_alert: |
+        ⚠️ 风险告警
+        ==========
+        时间: {time}
+        类型: {alert_type}
+        级别: {level}
+        详情: {message}
+        建议操作: {suggestion}
+        
+        当前状态:
+        总资产: {total_asset:,.2f}
+        持仓比例: {position_ratio:.1f}%
+        今日亏损: {daily_loss:.2f}%
+
+  # 企业微信配置
+  wechat_work:
+    enabled: false
+    corpid: "YOUR_CORPID"
+    corpsecret: "YOUR_SECRET"
+    agentid: 1000002
+    touser: "@all"
+
+  # 邮件通知
+  email:
+    enabled: false
+    smtp_server: "smtp.qq.com"
+    smtp_port: 465
+    sender: "your_email@qq.com"
+    password: "your_auth_code"
+    receivers:
+      - "receiver1@example.com"
+      - "receiver2@example.com"
+
+  # 控制台通知（开发调试用）
+  console:
+    enabled: true
+    color_output: true
+
+# 定时任务配置
+scheduler:
+  enabled: true
+
+  # 每日任务
+  daily_tasks:
+    - name: "market_open_prepare"
+      time: "09:00"
+      enabled: true
+      description: "开盘前准备"
+
+    - name: "morning_check"
+      time: "10:30"
+      enabled: true
+      description: "上午盘中检查"
+
+    - name: "afternoon_check"
+      time: "14:00"
+      enabled: true
+      description: "下午盘中检查"
+
+    - name: "market_close_summary"
+      time: "15:30"
+      enabled: true
+      description: "收盘总结"
+
+    - name: "evening_report"
+      time: "20:00"
+      enabled: true
+      description: "晚间报告"
+
+# 系统监控
+monitoring:
+  # 资源监控
+  resource:
+    check_interval: 300  # 5分钟检查一次
+    cpu_threshold: 80    # CPU使用率阈值
+    memory_threshold: 80 # 内存使用率阈值
+
+  # 网络监控
+  network:
+    check_internet: true
+    timeout: 10
+
+  # 数据监控
+  data:
+    check_market_data: true
+    data_freshness_threshold: 300  # 数据新鲜度阈值（秒）
