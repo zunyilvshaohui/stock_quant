@@ -1,41 +1,43 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-核心策略模块
-包含数据获取、指标计算、策略实现等核心功能
+工具模块 - 提供各种辅助函数和工具类
 """
+
+# 导出核心工具类
+from .logger import setup_logger, get_logger
+from .helpers import timer, retry, Singleton
+from .date_utils import is_trading_day, get_next_trading_day
+from .notifier import Notifier, DingTalkNotifier
 
 # 版本信息
 __version__ = "1.0.0"
 __author__ = "股票量化策略团队"
-__description__ = "量化策略核心模块"
-
-# 导出核心类
-from .data_fetcher import DataFetcher
-from .data_processor import DataProcessor
-from .indicators import TechnicalIndicators
-from .base_strategy import BaseStrategy
-
-# 尝试导入DynamicCCIStrategy（如果存在）
-try:
-    from .strategy import DynamicCCIStrategy
-
-    __all__.append("DynamicCCIStrategy")
-except ImportError:
-    print("⚠️  DynamicCCIStrategy暂不可用，将在第4天创建")
-    DynamicCCIStrategy = None
+__description__ = "量化交易工具模块"
 
 # 导出列表
 __all__ = [
-    # 数据模块
-    "DataFetcher",
-    "DataProcessor",
+    # 日志
+    "setup_logger",
+    "get_logger",
 
-    # 指标模块
-    "TechnicalIndicators",
+    # 辅助函数
+    "timer",
+    "retry",
+    "Singleton",
 
-    # 策略模块
-    "BaseStrategy",
+    # 日期工具
+    "is_trading_day",
+    "get_next_trading_day",
+
+    # 通知
+    "Notifier",
+    "DingTalkNotifier",
+
+    # 装饰器
+    "timer",
+    "retry",
 ]
 
-print(f"📦 核心模块 v{__version__} 已加载")
+# 初始化信息
+print(f"📦 工具模块 v{__version__} 已加载")
